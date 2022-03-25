@@ -1,0 +1,47 @@
+name: CI
+on:
+  pull_request:
+    branches:
+      - development
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up nodejs version 16
+        uses: actions/setup-node@v2.4.0
+        with:
+          node-version: 16
+
+      - name: Setup environment variables
+        shell: bash
+        run: |
+          echo 'APP_ENV=test' > .env
+          echo APP_PORT=${{ secrets.APP_PORT }} >> .env
+          echo JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} >> .env
+
+          echo DB_HOST=${{ secrets.DB_HOST }} >> .env
+          echo DB_NAME=${{ secrets.DB_NAME }} >> .env
+          echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
+          echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> .env
+
+      - name: Install package
+        run: yarn install
+
+      - name: Linter
+        run: yarn lint
+
+      - name: Build
+        run: yarn build
+
+      - name: Run migration
+        run: yarn migrate
+
+      - name: Test
+        run: yarn test

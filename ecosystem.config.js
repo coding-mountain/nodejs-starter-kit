@@ -1,0 +1,15 @@
+module.exports = {
+  name: 'API',
+  node_args: '-r tsconfig-paths/register --nouse-idle-notification --max-old-space-size=8000 --inspect=0.0.0.0:9229',
+  script: './dist/index.js',
+  error_file: 'logs/api.err.log',
+  out_file: 'logs/api.out.log',
+  wait_ready: true,
+  listen_timeout: 10000,
+  kill_timeout: 30000,
+  max_restarts: 5,
+  exp_backoff_restart_delay: 5000,
+  instances: 1,
+  max_memory_restart: '8000M',
+  exec_mode: 'fork',
+};

@@ -1,0 +1,16 @@
+yarn.lock
+package-lock.json
+dist/
+node_modules/
+logs/
+.vscode/
+.env
+tsconfig.tsbuildinfo
+tsconfig-build.tsbuildinfo
+yarn-error.log
+.nyc_output
+public/uploads/
+public/sample/
+temp/*
+!temp/.gitkeep 
+.DS_Store

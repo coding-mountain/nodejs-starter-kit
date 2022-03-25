@@ -1,0 +1,311 @@
+openapi: 3.0.0
+info:
+  description: API
+  version: 1.0.0
+  title: API
+servers:
+  - url: http://localhost:3001
+
+paths:
+  ## AUTH
+  /signup:
+    post:
+      description: Signup
+      operationId: signup
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '200':
+          description: Success
+        '422':
+          description: Validation Error
+        '500':
+          description: Internal Server Error
+        '501':
+          description: 501 error
+  /login/email:
+    post:
+      operationId: loginWithEmail
+      description: Login with Email Address
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginWithEmailRequest'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /token/generate:
+    post:
+      operationId: generateToken
+      summary: Generate JWT token
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                refreshToken:
+                  type: string
+                email:
+                  type: string
+      responses:
+        '200':
+          description: success
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /verification/generate:
+    post:
+      description: Generate verification Token
+      operationId: generateEmailVerificationToken
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                email:
+                  type: string
+                  example: user@admin.com
+      responses:
+        '200':
+          description: success
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /verify/email:
+    post:
+      description: Verify email
+      operationId: verifyEmail
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailVerifyRequest'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /verify/session:
+    get:
+      operationId: verifySession
+      description: verify session
+      tags:
+        - Auth
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: success
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /password:
+    put:
+      operationId: changePassword
+      description: update password
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePasswordRequest'
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: success
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /logout:
+    put:
+      operationId: logout
+      description: logout user
+      tags:
+        - Auth
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: success
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /forgotPassword:
+    post:
+      operationId: forgotPassword
+      description: forgot password
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+    put:
+      operationId: updateForgotPassword
+      description: update password
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateForgotPasswordRequest'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+components:
+  securitySchemes:
+    JWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    SignupRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          example: user@admin.com
+        password:
+          type: string
+          example: password
+        name:
+          type: string
+          example: user name
+        role:
+          type: string
+          example: USER
+      required:
+        - email
+        - password
+        - name
+        - mobile
+    LoginWithEmailRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          description: Email Address
+          example: user@admin.com
+        password:
+          type: string
+          description: Password
+          example: password
+        role:
+          type: string
+          description: User role
+          example: USER | ADMIN
+      required:
+        - email
+        - password
+        - role
+    EmailVerifyRequest:
+      additionalProperties: false
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email Address
+          example: user@admin.com
+        token:
+          type: string
+          description: Email Verification Token
+          example: '123456'
+    ForgotPasswordRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          description: Email Address
+        role:
+          type: string
+          description: User role
+          example: USER | ADMIN
+    UpdateForgotPasswordRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          description: Email Address
+        token:
+          type: string
+          description: OTP
+        password:
+          type: string
+          description: password
+    UpdatePasswordRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        oldPassword:
+          type: string
+          description: Old Password
+        newPassword:
+          type: string
+          description: New Password

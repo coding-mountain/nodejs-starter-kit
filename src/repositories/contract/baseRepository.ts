@@ -1,20 +1,21 @@
 import { Model, ModelStatic, FindAndCountOptions, FindOptions, UpdateOptions, DestroyOptions } from 'sequelize';
 import Writer from '@app/repositories/contract/interfaces/writer';
 import Reader from '@app/repositories/contract/interfaces/reader';
+import { MakeNullishOptional } from 'sequelize/types/utils';
 
 /**
  * A - model attributes
  * C - creation attributes
  * I - model instance
  */
-abstract class BaseRepository<A, C, I extends Model<A, C>> implements Writer<I, A, C>, Reader<I> {
+abstract class BaseRepository<A, C extends object, I extends Model<A, C>> implements Writer<I, A, C>, Reader<I> {
   protected model: ModelStatic<I>;
 
   constructor(model: ModelStatic<I>) {
     this.model = model;
   }
 
-  public build(data: C) {
+  public build(data: MakeNullishOptional<C>) {
     return this.model.build(data);
   }
 
@@ -30,11 +31,11 @@ abstract class BaseRepository<A, C, I extends Model<A, C>> implements Writer<I, 
     return this.model.findByPk(id);
   }
 
-  public create(data: C): Promise<I> {
+  public create(data: MakeNullishOptional<C>): Promise<I> {
     return this.model.create(data);
   }
 
-  public update(data: Partial<A>, query: UpdateOptions): Promise<[number, I[]]> {
+  public update(data: Partial<A>, query: UpdateOptions): Promise<[affectedCount: number]> {
     return this.model.update(data, query);
   }
 
@@ -49,7 +50,7 @@ abstract class BaseRepository<A, C, I extends Model<A, C>> implements Writer<I, 
     return this.model.findAndCountAll(options);
   }
 
-  public bulkCreate(data: C[]): Promise<I[]> {
+  public bulkCreate(data: MakeNullishOptional<C>[]): Promise<I[]> {
     return this.model.bulkCreate(data);
   }
 }

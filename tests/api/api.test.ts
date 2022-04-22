@@ -5,6 +5,7 @@ import { Application } from 'express';
 import app from '../../src/app';
 
 chai.use(chaiHttp);
+chai.should();
 
 let server: Application;
 

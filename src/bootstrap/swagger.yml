@@ -242,7 +242,6 @@ components:
         - email
         - password
         - name
-        - mobile
     LoginWithEmailRequest:
       type: object
       additionalProperties: false

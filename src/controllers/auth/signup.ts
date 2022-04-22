@@ -13,7 +13,6 @@ const validateSignUpRequest = async (req: Request) => {
     name: 'required|alphabetWithSpace|min:3|max:255',
     email: 'required|email|min:3|max:255',
     password: 'required|min:6|max:255',
-    mobile: 'required|phone',
     role: `required|anyOne:${UserRole.USER},${UserRole.ADMIN}`,
   };
 
